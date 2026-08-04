@@ -1,5 +1,15 @@
 [
   {
+    "version": "0.0.8",
+    "build": 11,
+    "date": "2026-08-05",
+    "features": [
+      "Replace placeholder map with Google Maps route markers",
+      "Show pickup, dropoff and current-location markers with route line",
+      "Include Firestore and OTP hardening from previous release"
+    ]
+  },
+  {
     "version": "0.0.7",
     "build": 10,
     "date": "2026-08-05",
