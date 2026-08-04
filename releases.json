@@ -1,5 +1,16 @@
 [
   {
+    "version": "0.0.10",
+    "build": 13,
+    "date": "2026-08-05",
+    "features": [
+      "Set RideKSA app icon from Play Store logo assets",
+      "Fixed Flutter web bank notification MissingPlugin error",
+      "Fixed Flutter web update checker PackageInfo MissingPlugin error",
+      "Updated web favicon, PWA icons, and app identity metadata"
+    ]
+  },
+  {
     "version": "0.0.9",
     "build": 12,
     "date": "2026-08-05",
