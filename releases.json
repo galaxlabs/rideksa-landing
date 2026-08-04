@@ -1,5 +1,16 @@
 [
   {
+    "version": "0.0.12",
+    "build": 15,
+    "date": "2026-08-05",
+    "features": [
+      "Replaced cross-site cookie dependency with verified Firebase bearer authentication",
+      "Passenger bookings, trips, and invoices remain scoped to the authenticated user",
+      "Supports browsers that block third-party cookies",
+      "Keeps persistent Back and Menu navigation controls"
+    ]
+  },
+  {
     "version": "0.0.11",
     "build": 14,
     "date": "2026-08-05",
