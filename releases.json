@@ -1,0 +1,38 @@
+[
+  {
+    "version": "0.0.5",
+    "build": 8,
+    "date": "2026-08-04",
+    "features": [
+      "Redesigned login & onboarding screen with premium gold/green branding",
+      "Web app moved to dedicated domain rideksa-web.celtcoksa.com",
+      "Saudi Riyal symbol shown on all prices and wallet displays",
+      "Purpose-first signup: Passenger, Captain, Company, or Partner",
+      "App sidebar with History, Invoices, Groups, Bookings, Notifications, Chat and Settings",
+      "My rides, bookings and invoice filters fixed so you only see your own records",
+      "Foreground location service and clean release build (no ad SDK)"
+    ]
+  },
+  {
+    "version": "0.0.4",
+    "build": 6,
+    "date": "2026-08-01",
+    "features": [
+      "Fixed login for Firebase-only users (browser credentials now sent correctly)",
+      "Onboarding is no longer skipped silently if the account link fails",
+      "Automatic vehicle naming - no more manual vehicle name entry",
+      "Web app updates no longer stuck behind the cache",
+      "Default pricing rules seeded for all vehicle types"
+    ]
+  },
+  {
+    "version": "0.0.1",
+    "build": 3,
+    "date": "2026-08-01",
+    "features": [
+      "First signed release",
+      "White cursor and text selection on the login screen",
+      "Default pricing rules for Sedan, SUV, Van, Bus and Luxury"
+    ]
+  }
+]
