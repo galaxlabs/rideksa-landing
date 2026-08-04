@@ -1,5 +1,16 @@
 [
   {
+    "version": "0.0.7",
+    "build": 10,
+    "date": "2026-08-05",
+    "features": [
+      "Fix OTP request flow so failures/timeouts complete correctly",
+      "Harden Firestore rules from broad authenticated write access",
+      "Add public endpoint rate limiting for booking, group join, config and payment webhook",
+      "Keep My Rides and History split plus guest group join updates"
+    ]
+  },
+  {
     "version": "0.0.6",
     "build": 9,
     "date": "2026-08-05",
