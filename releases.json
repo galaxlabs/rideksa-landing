@@ -1,5 +1,16 @@
 [
   {
+    "version": "0.0.11",
+    "build": 14,
+    "date": "2026-08-05",
+    "features": [
+      "Fixed Firebase-to-Frappe session restoration on web",
+      "Automatically renews expired backend sessions and retries protected requests once",
+      "Forces secure cross-site Frappe session cookies",
+      "Added persistent Back and Menu controls to sidebar screens"
+    ]
+  },
+  {
     "version": "0.0.10",
     "build": 13,
     "date": "2026-08-05",
