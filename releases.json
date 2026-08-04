@@ -1,5 +1,16 @@
 [
   {
+    "version": "0.0.9",
+    "build": 12,
+    "date": "2026-08-05",
+    "features": [
+      "Fixed sidebar navigation crash caused by numeric query parameters",
+      "Added Update App screen in the sidebar",
+      "Added route error page with Home and Back actions",
+      "Enabled RideKSA web CORS login on the backend"
+    ]
+  },
+  {
     "version": "0.0.8",
     "build": 11,
     "date": "2026-08-05",
