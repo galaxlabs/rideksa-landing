@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="RideKSA - Book group rides & transport across Saudi Arabia. Flat fares, instant booking, live tracking, wallet payments.">
+<title>RideKSA - Rides &amp; Transport Across Saudi Arabia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary:#006C35; --primaryDark:#004D25; --primaryLight:#1B8A4A;
+    --accent:#C4A35A; --accentLight:#E8D5A3;
+    --bg:#0A1F14; --surface:#0E2A1C; --card:#112A1D;
+    --text:#F0F5F0; --muted:#A8BFB0;
+    --gradient:linear-gradient(135deg, #006C35 0%, #00A24E 55%, #1B8A4A 100%);
+    --gold:linear-gradient(135deg, #C4A35A, #E8D5A3);
+    --radius:20px;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  body {
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.6; overflow-x:hidden;
+  }
+  ::selection { background:var(--accent); color:#0A1F14; }
+  .ic { width:1em; height:1em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+
+  /* ---------- Animated background ---------- */
+  .bg-fx { position:fixed; inset:0; z-index:-2; overflow:hidden; }
+  .blob { position:absolute; border-radius:50%; filter:blur(90px); opacity:.45; animation:float 18s ease-in-out infinite; }
+  .blob-1 { width:520px; height:520px; background:var(--primary); top:-120px; left:-120px; }
+  .blob-2 { width:420px; height:420px; background:var(--accent); bottom:-80px; right:-80px; animation-delay:-6s; }
+  .blob-3 { width:300px; height:300px; background:#00A24E; top:40%; left:55%; opacity:.25; animation-delay:-12s; }
+  @keyframes float {
+    0%,100% { transform:translate(0,0) scale(1); }
+    33%     { transform:translate(40px,-30px) scale(1.08); }
+    66%     { transform:translate(-30px,25px) scale(.95); }
+  }
+  .grid-overlay {
+    position:fixed; inset:0; z-index:-1; opacity:.05; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(196,163,90,.6) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(196,163,90,.6) 1px, transparent 1px);
+    background-size:56px 56px;
+  }
+
+  /* ---------- Nav ---------- */
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 5vw; transition:background .3s, box-shadow .3s, backdrop-filter .3s;
+  }
+  nav.scrolled { background:rgba(10,31,20,.72); backdrop-filter:blur(14px); box-shadow:0 8px 30px rgba(0,0,0,.35); }
+  .logo { display:flex; align-items:center; gap:12px; font-weight:800; font-size:20px; letter-spacing:.3px; }
+  .logo-badge {
+    width:42px; height:42px; border-radius:12px; background:var(--gradient);
+    display:flex; align-items:center; justify-content:center; color:#fff;
+    box-shadow:0 6px 18px rgba(0,108,53,.5);
+  }
+  .logo-badge svg { width:22px; height:22px; fill:none; stroke:#fff; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .logo span b { color:var(--accent); }
+  .nav-links { display:flex; gap:30px; align-items:center; font-size:15px; font-weight:500; }
+  .nav-links a { color:var(--text); text-decoration:none; opacity:.85; transition:opacity .2s; }
+  .nav-links a:hover { opacity:1; color:var(--accent); }
+  .btn { display:inline-flex; align-items:center; gap:8px; text-decoration:none; font-weight:700; border-radius:14px; transition:transform .2s, box-shadow .2s, background .2s; cursor:pointer; border:none; }
+  .btn-primary { background:var(--gradient); color:#fff; padding:14px 28px; box-shadow:0 10px 30px rgba(0,162,78,.4); }
+  .btn-primary:hover { transform:translateY(-2px); box-shadow:0 14px 38px rgba(0,162,78,.55); }
+  .btn-gold { background:var(--gold); color:#0A1F14; padding:12px 26px; }
+  .btn-gold:hover { transform:translateY(-2px); }
+  .btn-ghost { border:1px solid rgba(255,255,255,.25); color:#fff; padding:12px 24px; background:transparent; }
+  .btn-ghost:hover { background:rgba(255,255,255,.08); }
+  .btn svg { width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+
+  /* ---------- Hero ---------- */
+  header { min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:120px 5vw 60px; position:relative; }
+  .hero { display:grid; grid-template-columns:1.1fr .9fr; gap:60px; align-items:center; max-width:1200px; margin:0 auto; width:100%; }
+  .badge-pill {
+    display:inline-flex; align-items:center; gap:8px; background:rgba(196,163,90,.14);
+    border:1px solid rgba(196,163,90,.4); color:var(--accentLight);
+    padding:8px 16px; border-radius:50px; font-size:13px; font-weight:600; margin-bottom:22px;
+  }
+  .badge-pill .dot { width:8px; height:8px; border-radius:50%; background:var(--accentLight); box-shadow:0 0 10px var(--accent); animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+  h1 { font-size:clamp(38px,5.5vw,64px); line-height:1.08; font-weight:800; letter-spacing:-1.5px; }
+  h1 .grad { background:var(--gold); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .hero-sub { font-size:clamp(16px,1.6vw,19px); color:var(--muted); margin:22px 0 34px; max-width:540px; }
+  .hero-actions { display:flex; gap:16px; flex-wrap:wrap; align-items:center; }
+  .meta-line { margin-top:22px; display:flex; gap:26px; flex-wrap:wrap; font-size:13.5px; color:var(--muted); }
+  .meta-line span { display:inline-flex; align-items:center; gap:7px; }
+  .meta-line svg { width:15px; height:15px; fill:none; stroke:var(--primaryLight); stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+  .hero-visual { position:relative; }
+  .phone {
+    width:300px; height:610px; margin:0 auto; border-radius:44px; padding:14px;
+    background:linear-gradient(160deg,#0E2A1C,#08170F);
+    border:1px solid rgba(196,163,90,.28); box-shadow:0 40px 90px rgba(0,0,0,.5);
+    position:relative; transform:rotate(3deg); transition:transform .4s;
+  }
+  .phone:hover { transform:rotate(0deg) translateY(-6px); }
+  .phone-screen {
+    width:100%; height:100%; border-radius:32px; overflow:hidden; position:relative;
+    background:linear-gradient(180deg,var(--primaryDark) 0%, #0A1F14 45%);
+  }
+  .phone-notch { position:absolute; top:12px; left:50%; transform:translateX(-50%); width:110px; height:24px; border-radius:20px; background:#050F0A; z-index:5; }
+  .app-top { padding:56px 20px 16px; text-align:center; }
+  .app-top .mini-logo { width:52px; height:52px; margin:0 auto 10px; border-radius:16px; background:var(--gradient); display:flex; align-items:center; justify-content:center; box-shadow:0 10px 26px rgba(0,162,78,.5); }
+  .app-top .mini-logo svg { width:26px; height:26px; fill:none; stroke:#fff; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .app-top h3 { font-size:17px; }
+  .app-top p { font-size:12px; color:var(--muted); }
+  .app-map { margin:14px 16px; height:150px; border-radius:18px; position:relative; overflow:hidden; background:linear-gradient(120deg,#0D2A1C,#123523); }
+  .app-map::before { content:''; position:absolute; inset:0; background-image:linear-gradient(rgba(196,163,90,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(196,163,90,.18) 1px,transparent 1px); background-size:24px 24px; }
+  .car-marker { position:absolute; left:28%; top:42%; width:44px; height:44px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(0,0,0,.4); animation:drive 5s ease-in-out infinite; }
+  .car-marker svg { width:22px; height:22px; fill:none; stroke:var(--primary); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .dest-marker { position:absolute; right:22%; top:18%; width:34px; height:34px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; box-shadow:0 6px 16px rgba(196,163,90,.5); }
+  .dest-marker svg { width:16px; height:16px; fill:none; stroke:#0A1F14; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .route-line { position:absolute; left:30%; top:46%; width:46%; height:3px; border-radius:3px; background:var(--accent); transform:rotate(-32deg); box-shadow:0 0 12px rgba(196,163,90,.6); }
+  @keyframes drive { 0%,100%{left:24%;top:40%} 50%{left:52%;top:60%} }
+  .live-chip { position:absolute; top:10px; left:10px; background:rgba(10,31,20,.8); border:1px solid rgba(196,163,90,.4); color:#fff; font-size:10.5px; padding:5px 10px; border-radius:20px; display:flex; align-items:center; gap:6px; }
+  .live-chip .dot { width:7px; height:7px; border-radius:50%; background:#22C55E; animation:pulse 1.5s infinite; }
+  .trip-card { margin:14px 16px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); border-radius:16px; padding:14px; backdrop-filter:blur(6px); }
+  .trip-card .row { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .trip-card .driver { display:flex; align-items:center; gap:10px; }
+  .trip-card .avatar { width:34px; height:34px; border-radius:50%; background:var(--accent); color:#0A1F14; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; }
+  .trip-card small { color:var(--muted); font-size:11px; }
+  .trip-card .fare { font-size:18px; font-weight:800; color:var(--accentLight); }
+  .trip-card .btn-go { background:var(--gradient); color:#fff; font-size:11px; font-weight:700; padding:7px 14px; border-radius:9px; text-decoration:none; }
+  .floating-note { position:absolute; right:-14px; bottom:60px; background:rgba(17,42,29,.92); border:1px solid rgba(196,163,90,.3); border-radius:14px; padding:12px 16px; font-size:12px; box-shadow:0 12px 30px rgba(0,0,0,.4); animation:float 6s ease-in-out infinite; }
+  .floating-note b { color:var(--accentLight); }
+  .star-rating { color:var(--accent); letter-spacing:2px; font-size:12px; }
+
+  /* ---------- Sections ---------- */
+  section { max-width:1200px; margin:0 auto; padding:90px 5vw; }
+  .sec-head { text-align:center; max-width:640px; margin:0 auto 60px; }
+  .sec-head .kicker { color:var(--accent); text-transform:uppercase; letter-spacing:3px; font-size:12.5px; font-weight:700; margin-bottom:12px; }
+  .sec-head h2 { font-size:clamp(28px,4vw,42px); font-weight:800; letter-spacing:-1px; }
+  .sec-head p { color:var(--muted); margin-top:14px; font-size:16.5px; }
+
+  /* ---------- Stats strip ---------- */
+  .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-bottom:90px; }
+  .stat { text-align:center; background:var(--card); border:1px solid rgba(196,163,90,.16); border-radius:var(--radius); padding:30px 16px; transition:transform .3s; }
+  .stat:hover { transform:translateY(-4px); }
+  .stat .num { font-size:36px; font-weight:800; background:var(--gold); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .stat .lbl { color:var(--muted); font-size:13px; margin-top:6px; }
+
+  /* ---------- Features grid ---------- */
+  .features { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+  .feature {
+    background:var(--card); border:1px solid rgba(196,163,90,.14); border-radius:var(--radius);
+    padding:30px; transition:transform .3s, border-color .3s, box-shadow .3s; position:relative; overflow:hidden;
+  }
+  .feature::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--gradient); opacity:0; transition:opacity .3s; }
+  .feature:hover { transform:translateY(-6px); border-color:rgba(196,163,90,.45); box-shadow:0 20px 50px rgba(0,0,0,.4); }
+  .feature:hover::before { opacity:1; }
+  .f-icon { width:52px; height:52px; border-radius:14px; background:rgba(0,162,78,.14); display:flex; align-items:center; justify-content:center; color:var(--primaryLight); margin-bottom:18px; }
+  .f-icon svg { width:26px; height:26px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+  .feature h3 { font-size:18px; font-weight:700; margin-bottom:8px; }
+  .feature p { color:var(--muted); font-size:14px; }
+
+  /* ---------- How it works ---------- */
+  .how { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+  .step { background:var(--card); border-radius:var(--radius); padding:32px; border:1px solid rgba(196,163,90,.14); position:relative; transition:transform .3s; }
+  .step:hover { transform:translateY(-5px); }
+  .step .n { position:absolute; top:20px; right:24px; font-size:52px; font-weight:800; color:rgba(196,163,90,.12); }
+  .step .ic { width:56px; height:56px; border-radius:14px; background:rgba(196,163,90,.12); display:flex; align-items:center; justify-content:center; color:var(--accent); margin-bottom:16px; }
+  .step .ic svg { width:26px; height:26px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+  .step h3 { font-size:17px; margin-bottom:8px; }
+  .step p { color:var(--muted); font-size:14px; }
+
+  /* ---------- Audience tabs ---------- */
+  .audience { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+  .aud-card { background:var(--card); border-radius:var(--radius); padding:30px; border:1px solid rgba(196,163,90,.14); transition:transform .3s; }
+  .aud-card:hover { transform:translateY(-5px); }
+  .aud-card .role { font-size:13px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:2px; margin-bottom:14px; }
+  .aud-card h3 { font-size:20px; margin-bottom:14px; }
+  .aud-card ul { list-style:none; }
+  .aud-card li { display:flex; gap:10px; margin-bottom:10px; font-size:14.5px; color:var(--muted); }
+  .aud-card li svg { width:16px; height:16px; flex-shrink:0; fill:none; stroke:var(--primaryLight); stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; margin-top:2px; }
+
+  /* ---------- Download / CTA ---------- */
+  .cta { background:var(--card); border:1px solid rgba(196,163,90,.25); border-radius:28px; padding:64px 40px; text-align:center; position:relative; overflow:hidden; }
+  .cta::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 20% 20%, rgba(0,162,78,.22), transparent 55%); }
+  .cta h2 { font-size:clamp(26px,3.5vw,40px); font-weight:800; position:relative; }
+  .cta p { color:var(--muted); margin:16px auto 30px; max-width:480px; position:relative; }
+  .cta .btn-primary { font-size:18px; padding:18px 40px; position:relative; }
+  .cta .ver { margin-top:20px; font-size:13px; color:var(--muted); position:relative; }
+  .hash-box { margin-top:24px; position:relative; display:inline-block; max-width:100%; }
+  .hash-box code { display:block; background:rgba(10,31,20,.7); border:1px solid rgba(196,163,90,.2); border-radius:10px; padding:10px 16px; font-size:12px; color:var(--accentLight); word-break:break-all; }
+
+  /* ---------- FAQ ---------- */
+  .faq { max-width:760px; margin:0 auto; }
+  .faq-item { background:var(--card); border:1px solid rgba(196,163,90,.14); border-radius:14px; margin-bottom:12px; overflow:hidden; }
+  .faq-q { width:100%; background:none; border:none; color:var(--text); font-family:inherit; font-size:15.5px; font-weight:600; padding:18px 20px; text-align:left; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:14px; }
+  .faq-q .chev { transition:transform .3s; color:var(--accent); width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+  .faq-item.open .chev { transform:rotate(180deg); }
+  .faq-a { max-height:0; overflow:hidden; transition:max-height .35s ease; }
+  .faq-a p { padding:0 20px 18px; color:var(--muted); font-size:14.5px; }
+
+  /* ---------- Footer ---------- */
+  footer { border-top:1px solid rgba(196,163,90,.12); padding:40px 5vw; text-align:center; color:var(--muted); font-size:13.5px; }
+  footer .flogo { display:flex; align-items:center; justify-content:center; gap:8px; font-weight:800; color:var(--text); margin-bottom:8px; }
+  footer .flogo svg { width:18px; height:18px; fill:none; stroke:var(--accent); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  footer .links { display:flex; gap:22px; justify-content:center; flex-wrap:wrap; margin-top:10px; }
+  footer a { color:var(--muted); text-decoration:none; }
+  footer a:hover { color:var(--accent); }
+
+  /* ---------- Reveal animation ---------- */
+  .reveal { opacity:0; transform:translateY(34px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.visible { opacity:1; transform:none; }
+  .d1{transition-delay:.08s} .d2{transition-delay:.16s} .d3{transition-delay:.24s} .d4{transition-delay:.32s}
+
+  @media (max-width:960px){
+    .hero { grid-template-columns:1fr; text-align:center; }
+    .hero-actions,.meta-line { justify-content:center; }
+    .hero-sub { margin-left:auto; margin-right:auto; }
+    .phone { margin-top:40px; }
+    .features,.how,.audience { grid-template-columns:1fr 1fr; }
+    .stats { grid-template-columns:repeat(2,1fr); }
+    .nav-links { display:none; }
+    .nav-cta { display:block !important; }
+  }
+  @media (max-width:600px){
+    .features,.how,.audience,.stats { grid-template-columns:1fr; }
+    .floating-note { display:none; }
+    section { padding:70px 6vw; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-fx">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+<div class="grid-overlay"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-car" viewBox="0 0 24 24"><path d="M3 16v-3a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3"/><path d="M3 16h18v3a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-1H7v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M5 11 6.5 6.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11"/><circle cx="7.5" cy="16" r="1"/><circle cx="16.5" cy="16" r="1"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M4 22V4a20 20 0 0 1 16 0v10a20 20 0 0 0-16 0"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+    <symbol id="i-navigation" viewBox="0 0 24 24"><path d="m3 11 19-9-9 19-2-8-8-2z"/></symbol>
+    <symbol id="i-handshake" viewBox="0 0 24 24"><path d="M11 17a5 5 0 0 1-5-5c0-2 1-3 1-3l6-6 3 3-4 4c1 1 1 3 0 4"/><path d="M13 7l4-4 3 3-6 6"/><path d="m13 11 4 4"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12a2 2 0 0 0 2 2h14v-8H10a2 2 0 0 1 0-4h10"/><path d="M18 14a1 1 0 1 0 0 2"/></symbol>
+    <symbol id="i-invoice" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 13h5"/></symbol>
+    <symbol id="i-building" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="1"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M8 10h.01M16 10h.01M12 10h.01M8 14h.01M16 14h.01M12 14h.01"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="3"/><circle cx="18" cy="5" r="3"/><path d="M6 16a8 8 0 0 1 8-8h4"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></symbol>
+    <symbol id="i-verified" viewBox="0 0 24 24"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></symbol>
+    <symbol id="i-graduation" viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></symbol>
+    <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  </defs>
+</svg>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="logo">
+    <div class="logo-badge"><svg><use href="#i-car"/></svg></div>
+    <span>Ride<b>KSA</b></span>
+  </div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#audience">For You</a>
+    <a href="#download">Download</a>
+    <a href="#faq">FAQ</a>
+    <a class="btn btn-gold nav-cta" href="#download" style="display:inline-flex">Get the App</a>
+  </div>
+  <a class="btn btn-gold" style="display:inline-flex" href="#download">Download</a>
+</nav>
+
+<!-- HERO -->
+<header>
+  <div class="hero">
+    <div>
+      <span class="badge-pill"><span class="dot"></span> Now available for direct download in KSA</span>
+      <h1>Group rides &amp; transport<br><span class="grad">across Saudi Arabia.</span></h1>
+      <p class="hero-sub">RideKSA connects passengers, captains and transport companies on one platform - flat fares, instant booking, live trip tracking and secure wallet payments.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#download"><svg><use href="#i-download"/></svg> Download for Android</a>
+        <a class="btn btn-ghost" href="#features">Explore features</a>
+      </div>
+      <div class="meta-line">
+        <span><svg><use href="#i-check"/></svg> Flat fares, instant booking</span>
+        <span><svg><use href="#i-shield"/></svg> Signed release, HTTPS</span>
+        <span><svg><use href="#i-flag"/></svg> Built for Saudi Arabia</span>
+      </div>
+    </div>
+    <div class="hero-visual reveal">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-notch"></div>
+          <div class="app-top">
+            <div class="mini-logo"><svg><use href="#i-car"/></svg></div>
+            <h3>RideKSA</h3>
+            <p>Live trip tracking</p>
+          </div>
+          <div class="app-map">
+            <span class="live-chip"><span class="dot"></span> LIVE</span>
+            <div class="route-line"></div>
+            <div class="car-marker"><svg><use href="#i-car"/></svg></div>
+            <div class="dest-marker"><svg><use href="#i-pin"/></svg></div>
+          </div>
+          <div class="trip-card">
+            <div class="row">
+              <div class="driver">
+                <div class="avatar">AM</div>
+                <div>
+                  <b>Ahmed M.</b><br><small><span class="star-rating">&#9733;&#9733;&#9733;&#9733;&#9733;</span> 4.9 &middot; Sedan &middot; 3 min away</small>
+                </div>
+              </div>
+              <div class="fare">SAR 45</div>
+            </div>
+            <div class="row">
+              <small>Riyadh - Khobar &middot; Group of 3</small>
+              <a class="btn-go" href="#download">Track</a>
+            </div>
+          </div>
+          <div class="floating-note">
+            <span class="star-rating">&#9733;&#9733;&#9733;&#9733;&#9733;</span><br>
+            <b>+1,200</b> rides completed<br>across the Kingdom
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- STATS -->
+<section style="padding-top:20px">
+  <div class="stats reveal">
+    <div class="stat"><div class="num">3+</div><div class="lbl">Passenger, Captain &amp; Company roles</div></div>
+    <div class="stat"><div class="num">51</div><div class="lbl">Business modules powering the platform</div></div>
+    <div class="stat"><div class="num">24/7</div><div class="lbl">Live location tracking &amp; notifications</div></div>
+    <div class="stat"><div class="num">100%</div><div class="lbl">HTTPS, signed &amp; verified builds</div></div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="sec-head reveal">
+    <div class="kicker">Features</div>
+    <h2>Everything a modern transport platform needs</h2>
+    <p>From booking a shared ride to running a full transport company - RideKSA does it all in one app.</p>
+  </div>
+  <div class="features">
+    <div class="feature reveal d1"><div class="f-icon"><svg><use href="#i-calendar"/></svg></div><h3>Instant Booking</h3><p>Search routes, pick your group and book a ride in seconds. Flat, transparent fares with no surprises.</p></div>
+    <div class="feature reveal d2"><div class="f-icon"><svg><use href="#i-navigation"/></svg></div><h3>Live Trip Tracking</h3><p>Follow your ride on a live map with a foreground location service and real-time driver updates.</p></div>
+    <div class="feature reveal d3"><div class="f-icon"><svg><use href="#i-handshake"/></svg></div><h3>Captain Offers</h3><p>Captains receive booking requests and make competitive offers. Passengers choose the best one.</p></div>
+    <div class="feature reveal d1"><div class="f-icon"><svg><use href="#i-users"/></svg></div><h3>Group Rides</h3><p>Create a group ride, share an invite link and let friends join with a single tap - seat count respected.</p></div>
+    <div class="feature reveal d2"><div class="f-icon"><svg><use href="#i-wallet"/></svg></div><h3>Wallet Payments</h3><p>Secure wallet with transaction history, invoices, commission tracking and penalty handling.</p></div>
+    <div class="feature reveal d3"><div class="f-icon"><svg><use href="#i-invoice"/></svg></div><h3>Auto Invoices</h3><p>Every trip generates a professional invoice with items, letterhead and ZATCA-ready validation.</p></div>
+    <div class="feature reveal d1"><div class="f-icon"><svg><use href="#i-chat"/></svg></div><h3>Ride Chat</h3><p>Chat with your driver and co-passengers directly inside the app during the trip.</p></div>
+    <div class="feature reveal d2"><div class="f-icon"><svg><use href="#i-building"/></svg></div><h3>Company Transport</h3><p>Contract bookings, employee transport, staff assignment and corporate agreements built in.</p></div>
+    <div class="feature reveal d3"><div class="f-icon"><svg><use href="#i-route"/></svg></div><h3>Routes &amp; Places</h3><p>Curated routes, saved places and autocomplete across Saudi cities - from Riyadh to Dammam.</p></div>
+    <div class="feature reveal d1"><div class="f-icon"><svg><use href="#i-bell"/></svg></div><h3>Smart Notifications</h3><p>Real-time alerts for offers, trip assignments, group joins and payments via FCM push.</p></div>
+    <div class="feature reveal d2"><div class="f-icon"><svg><use href="#i-verified"/></svg></div><h3>Verified Captains</h3><p>Driver documents, vehicle validation and approval flows keep every ride safe and compliant.</p></div>
+    <div class="feature reveal d3"><div class="f-icon"><svg><use href="#i-chart"/></svg></div><h3>Admin Dashboard</h3><p>Companies and admins get a full dashboard: fleets, drivers, earnings, commissions and subscriptions.</p></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" style="background:rgba(255,255,255,.02);border-top:1px solid rgba(196,163,90,.1);border-bottom:1px solid rgba(196,163,90,.1)">
+  <div class="sec-head reveal">
+    <div class="kicker">How it works</div>
+    <h2>From request to ride in four steps</h2>
+  </div>
+  <div class="how">
+    <div class="step reveal d1"><div class="n">1</div><div class="ic"><svg><use href="#i-search"/></svg></div><h3>Search &amp; book</h3><p>Enter your route, pick a group or service type and get an instant quote with a fair, flat fare.</p></div>
+    <div class="step reveal d2"><div class="n">2</div><div class="ic"><svg><use href="#i-handshake"/></svg></div><h3>Get offers</h3><p>Available captains view your booking and send offers. Compare and accept the best one.</p></div>
+    <div class="step reveal d3"><div class="n">3</div><div class="ic"><svg><use href="#i-navigation"/></svg></div><h3>Ride &amp; track</h3><p>Follow your trip live on the map, chat with your driver and enjoy a tracked, safe journey.</p></div>
+    <div class="step reveal d1"><div class="n">4</div><div class="ic"><svg><use href="#i-star"/></svg></div><h3>Rate &amp; pay</h3><p>Pay securely from your wallet, get an instant invoice and rate your captain when you arrive.</p></div>
+    <div class="step reveal d2"><div class="n">5</div><div class="ic"><svg><use href="#i-users"/></svg></div><h3>Bring friends</h3><p>Share a group invite link and split the journey - each member joins with a single tap.</p></div>
+    <div class="step reveal d3"><div class="n">6</div><div class="ic"><svg><use href="#i-building"/></svg></div><h3>Run a company</h3><p>Transport companies manage fleets, staff trips, contracts and commissions from one dashboard.</p></div>
+  </div>
+</section>
+
+<!-- AUDIENCE -->
+<section id="audience">
+  <div class="sec-head reveal">
+    <div class="kicker">For everyone</div>
+    <h2>Built for passengers, captains &amp; companies</h2>
+  </div>
+  <div class="audience">
+    <div class="aud-card reveal d1">
+      <div class="role">Passengers</div>
+      <h3>Travel smarter</h3>
+      <ul>
+        <li><svg><use href="#i-check"/></svg> Book group rides with flat, fair fares</li>
+        <li><svg><use href="#i-check"/></svg> Track your trip live on the map</li>
+        <li><svg><use href="#i-check"/></svg> Chat with your driver in-app</li>
+        <li><svg><use href="#i-check"/></svg> Pay from a secure wallet, get instant invoices</li>
+        <li><svg><use href="#i-check"/></svg> Share invite links so friends join easily</li>
+      </ul>
+    </div>
+    <div class="aud-card reveal d2">
+      <div class="role">Captains</div>
+      <h3>Drive &amp; earn</h3>
+      <ul>
+        <li><svg><use href="#i-check"/></svg> Receive booking requests and send offers</li>
+        <li><svg><use href="#i-check"/></svg> Validated vehicles &amp; documents, approval flow</li>
+        <li><svg><use href="#i-check"/></svg> Live trip details, navigation and tracking</li>
+        <li><svg><use href="#i-check"/></svg> Track earnings and invoices in one place</li>
+        <li><svg><use href="#i-check"/></svg> Transparent fares and commission model</li>
+      </ul>
+    </div>
+    <div class="aud-card reveal d3">
+      <div class="role">Companies</div>
+      <h3>Run your fleet</h3>
+      <ul>
+        <li><svg><use href="#i-check"/></svg> Contract bookings &amp; employee transport</li>
+        <li><svg><use href="#i-check"/></svg> Manage vehicles, drivers and staff trips</li>
+        <li><svg><use href="#i-check"/></svg> Automatic commission &amp; settlement tracking</li>
+        <li><svg><use href="#i-check"/></svg> Corporate agreements and subscriptions</li>
+        <li><svg><use href="#i-check"/></svg> Full admin dashboard with reports</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- DOWNLOAD CTA -->
+<section id="download">
+  <div class="cta reveal">
+    <h2>Download RideKSA for Android</h2>
+    <p>Get the latest signed release directly - no store required. Verify the SHA-256 checksum before installing to be sure the file is authentic.</p>
+    <a class="btn btn-primary" href="/app-release.apk" download="RideKSA.apk"><svg><use href="#i-download"/></svg> Download RideKSA.apk (54.5 MB)</a>
+    <div class="ver">Version 0.0.5 (build 8) &middot; Android 7.0+ &middot; Signed V2/V3 &middot; HTTPS-secured</div>
+    <div class="hash-box">
+      <code>SHA-256: 29ec74ca402ff631bd5fce6bcee555bcf97362bf906536c10df3218d2760c86a</code>
+    </div>
+    <p style="margin-top:14px;font-size:13px">PowerShell: <code style="display:inline;padding:2px 8px;font-size:12px">Get-FileHash .\RideKSA.apk -Algorithm SHA256</code></p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="sec-head reveal">
+    <div class="kicker">FAQ</div>
+    <h2>Common questions</h2>
+  </div>
+  <div class="faq">
+    <div class="faq-item reveal">
+      <button class="faq-q">Is RideKSA available outside the Play Store?<svg class="chev"><use href="#i-chevron"/></svg></button>
+      <div class="faq-a"><p>Yes. RideKSA is distributed directly from our own secure server, so you always get the latest release without store delays.</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q">How do I verify the APK is authentic?<svg class="chev"><use href="#i-chevron"/></svg></button>
+      <div class="faq-a"><p>After downloading, run the SHA-256 command shown above and compare it to the checksum displayed on this page. They must match exactly. The app is signed with the GalaxyLabs release key.</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q">Why do I need to allow "Install unknown apps"?<svg class="chev"><use href="#i-chevron"/></svg></button>
+      <div class="faq-a"><p>Android requires this once when installing outside the Play Store. Go to Settings, then Apps, select your browser, enable "Install unknown apps", then open the downloaded APK.</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q">Which permissions does the app use?<svg class="chev"><use href="#i-chevron"/></svg></button>
+      <div class="faq-a"><p>Only what it needs: location (for live trip tracking), notifications (for trip updates) and internet. No SMS, contacts, or accessibility permissions.</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q">Who is RideKSA for?<svg class="chev"><use href="#i-chevron"/></svg></button>
+      <div class="faq-a"><p>Passengers booking group rides, captains offering transport services, and companies managing employee and contract transport across Saudi Arabia.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="flogo"><svg><use href="#i-car"/></svg> RideKSA</div>
+  <div>Group rides &amp; transport across Saudi Arabia.</div>
+  <div class="links">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#audience">For You</a>
+    <a href="#download">Download</a>
+    <a href="https://rideksa-84949.web.app" target="_blank" rel="noopener">Web App</a>
+  </div>
+  <div style="margin-top:14px">&copy; 2026 GalaxyLabs</div>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 30);
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const q = item.querySelector('.faq-q');
+    const a = item.querySelector('.faq-a');
+    q.addEventListener('click', () => {
+      const open = item.classList.toggle('open');
+      a.style.maxHeight = open ? a.scrollHeight + 'px' : '0';
+    });
+  });
+</script>
+</body>
+</html>
