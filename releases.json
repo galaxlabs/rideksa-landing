@@ -1,5 +1,15 @@
 [
   {
+    "version": "0.0.13",
+    "build": 16,
+    "date": "2026-08-05",
+    "features": [
+      "Assign Captain as a real Frappe role instead of an invalid User Type",
+      "Add server-authoritative trip acceptance and completion with live GPS recovery",
+      "Add FCM registration, notification retries, and Crashlytics reporting"
+    ]
+  },
+  {
     "version": "0.0.12",
     "build": 15,
     "date": "2026-08-05",
