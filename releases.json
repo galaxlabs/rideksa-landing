@@ -1,5 +1,20 @@
 [
   {
+    "version": "0.0.16",
+    "build": 19,
+    "date": "2026-08-05",
+    "features": [
+      "Phone + password login (auto-detect email vs mobile)",
+      "Saved passenger group reuse across trips/routes",
+      "Repeat booking from past booking detail",
+      "Start Ride (passenger marks departed) + Complete Ride (driver)",
+      "Moyasser payment gateway integration",
+      "Driver matching engine (city/distance ranking)",
+      "Schedule limits (max 3 rides + overlap prevention)",
+      "Atomic order removal on acceptance"
+    ]
+  },
+  {
     "version": "0.0.15",
     "build": 18,
     "date": "2026-08-05",
