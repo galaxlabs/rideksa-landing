@@ -1,5 +1,15 @@
 [
   {
+    "version": "0.0.14",
+    "build": 17,
+    "date": "2026-08-05",
+    "features": [
+      "Use Frappe passwords for email login and registration",
+      "Bridge authenticated users to Firebase with secure custom tokens",
+      "Add Frappe password reset and clear backend sessions on logout"
+    ]
+  },
+  {
     "version": "0.0.13",
     "build": 16,
     "date": "2026-08-05",
