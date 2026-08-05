@@ -1,5 +1,15 @@
 [
   {
+    "version": "0.0.15",
+    "build": 18,
+    "date": "2026-08-05",
+    "features": [
+      "Fix booking detail HTTP 500 and handle missing bookings safely",
+      "Allow booking owners and approved drivers to open authorized booking details",
+      "Redact passenger data for drivers and secure booking mutations"
+    ]
+  },
+  {
     "version": "0.0.14",
     "build": 17,
     "date": "2026-08-05",
